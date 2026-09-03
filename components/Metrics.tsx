@@ -1,4 +1,6 @@
-import { TrendingUp, Clock, CheckCircle2, ShieldAlert } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
 
 export function Metrics() {
   const stats = [
@@ -24,12 +26,37 @@ export function Metrics() {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.2, ease: "easeOut" as const },
+    },
+  };
+
   return (
     <section className="py-16 md:py-24 bg-white border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-12 sm:mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bancada border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             RESULTADOS OPERACIONAIS
           </div>
@@ -40,14 +67,22 @@ export function Metrics() {
             Sem promessas vazias. O impacto de colocar um funcionário digital focado
             em agilidade e organização técnica.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 4 Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* 4 Stats Grid with Staggered Entrance */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+        >
           {stats.map((item, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-bancada border border-aco-light rounded-[8px] p-6 hover:border-aco transition-colors"
+              variants={itemVariants}
+              whileHover={{ y: -4, transition: { duration: 0.15 } }}
+              className="bg-bancada border border-aco-light rounded-[8px] p-6 hover:border-aco transition-all hover:shadow-[0_4px_12px_rgba(16,20,24,0.03)]"
             >
               <span className="font-mono text-3xl sm:text-4xl font-bold text-laranja block mb-2">
                 {item.value}
@@ -58,12 +93,18 @@ export function Metrics() {
               <p className="text-xs text-aco leading-relaxed">
                 {item.subtext}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Real Operational Testimonial Quote */}
-        <div className="bg-[#101418] text-white rounded-[8px] p-6 sm:p-8 border border-zinc-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        {/* Real Operational Testimonial Quote with Motion */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+          className="bg-[#101418] text-white rounded-[8px] p-6 sm:p-8 border border-zinc-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+        >
           <div className="space-y-3 max-w-3xl">
             <p className="text-sm sm:text-base text-zinc-200 leading-relaxed italic">
               &quot;Antes do Téo, eu ficava até 22h respondendo cliente no WhatsApp e no outro dia o técnico chegava no cliente sem saber qual era o modelo do ar condicionado. Hoje o chamado entra, o Téo coleta os dados da etiqueta e a O.S. já cai no celular da equipe pronta para execução.&quot;
@@ -82,7 +123,7 @@ export function Metrics() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>
