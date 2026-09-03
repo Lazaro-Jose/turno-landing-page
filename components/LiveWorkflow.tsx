@@ -5,6 +5,7 @@ import {
   MessageSquare,
   Volume2,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatMessage {
   sender: "cliente" | "teo";
@@ -195,7 +196,13 @@ export function LiveWorkflow() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-10"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             DEMONSTRAÇÃO PRÁTICA
           </div>
@@ -206,165 +213,183 @@ export function LiveWorkflow() {
             Clique nos cenários abaixo e veja como uma conversa informal no WhatsApp
             se transforma em uma Ordem de Serviço estruturada sem intervenção manual.
           </p>
-        </div>
+        </motion.div>
 
         {/* Scenario Selector Tabs */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-8">
-          {scenarios.map((sc, index) => (
-            <button
-              key={sc.id}
-              onClick={() => setActiveScenario(index)}
-              className={`px-4 py-2.5 rounded-[8px] text-xs sm:text-sm font-semibold transition-all ${
-                activeScenario === index
-                  ? "bg-grafite text-white shadow-none"
-                  : "bg-white border border-aco-light text-aco hover:text-grafite hover:bg-aco-subtle"
-              }`}
-            >
-              {sc.tabTitle}
-            </button>
-          ))}
+          {scenarios.map((sc, index) => {
+            const isActive = activeScenario === index;
+            return (
+              <button
+                key={sc.id}
+                onClick={() => setActiveScenario(index)}
+                className={`relative px-4 py-2.5 rounded-[8px] text-xs sm:text-sm font-semibold transition-all ${
+                  isActive
+                    ? "bg-grafite text-white shadow-none"
+                    : "bg-white border border-aco-light text-aco hover:text-grafite hover:bg-aco-subtle"
+                }`}
+              >
+                {sc.tabTitle}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Workflow Showcase Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* Left Column: WhatsApp Interaction Flow */}
-          <div className="lg:col-span-6 bg-white border border-aco-light rounded-[12px] p-5">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center">
-                  <MessageSquare className="w-3.5 h-3.5" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-grafite block">
-                    WhatsApp Comercial
-                  </span>
-                  <span className="text-[10px] text-aco font-mono">
-                    Canal oficial da empresa
-                  </span>
-                </div>
-              </div>
-              <span className="text-[11px] font-mono text-aco">
-                {current.subtitle}
-              </span>
-            </div>
-
-            <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-              {current.whatsapp.map((msg, mIdx) => {
-                const isTeo = msg.sender === "teo";
-                return (
-                  <div
-                    key={mIdx}
-                    className={`p-3 rounded-[8px] text-xs ${
-                      isTeo
-                        ? "bg-[#101418] text-white ml-auto max-w-[90%] border border-zinc-800"
-                        : "bg-bancada text-grafite max-w-[90%] border border-aco-light"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-[10px] mb-1 font-mono">
-                      <span className={isTeo ? "text-laranja font-semibold" : "text-aco"}>
-                        {isTeo ? "Téo (Turno)" : "Cliente"}
-                      </span>
-                      <span className={isTeo ? "text-zinc-400" : "text-aco"}>
-                        {msg.time}
-                      </span>
-                    </div>
-
-                    {msg.isAudio && (
-                      <div className="flex items-center gap-2 p-1.5 mb-1.5 rounded bg-white/10 text-zinc-200 text-[11px] font-mono">
-                        <Volume2 className="w-3.5 h-3.5 text-laranja shrink-0" strokeWidth={1.5} />
-                        <span>{msg.audioDuration}</span>
-                      </div>
-                    )}
-
-                    {msg.hasImage && (
-                      <div className="p-1.5 mb-1.5 rounded bg-white border border-aco-light text-grafite text-[11px] font-mono">
-                        {msg.imageLabel}
-                      </div>
-                    )}
-
-                    <p className="leading-relaxed">{msg.text}</p>
+        {/* Workflow Showcase Grid with Animated Transition */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+          >
+            {/* Left Column: WhatsApp Interaction Flow */}
+            <div className="lg:col-span-6 bg-white border border-aco-light rounded-[12px] p-5">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center">
+                    <MessageSquare className="w-3.5 h-3.5" strokeWidth={1.5} />
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Right Column: Resulting Structured Ordem de Serviço */}
-          <div className="lg:col-span-6 bg-white border-2 border-grafite rounded-[12px] p-5 shadow-sm">
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-[6px] bg-laranja text-white flex items-center justify-center font-mono text-xs font-bold">
-                  OS
+                  <div>
+                    <span className="text-xs font-bold text-grafite block">
+                      WhatsApp Comercial
+                    </span>
+                    <span className="text-[10px] text-aco font-mono">
+                      Canal oficial da empresa
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold uppercase font-archivo text-grafite">
-                    Ordem de Serviço Gerada
-                  </h4>
-                  <p className="text-[10px] font-mono text-aco">
-                    Alimentada no sistema automaticamente
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="font-mono text-sm font-bold text-laranja block">
-                  {current.os.number}
-                </span>
-                <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  {current.os.status}
+                <span className="text-[11px] font-mono text-aco">
+                  {current.subtitle}
                 </span>
               </div>
+
+              <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+                {current.whatsapp.map((msg, mIdx) => {
+                  const isTeo = msg.sender === "teo";
+                  return (
+                    <motion.div
+                      key={mIdx}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15, delay: mIdx * 0.04 }}
+                      className={`p-3 rounded-[8px] text-xs ${
+                        isTeo
+                          ? "bg-[#101418] text-white ml-auto max-w-[90%] border border-zinc-800"
+                          : "bg-bancada text-grafite max-w-[90%] border border-aco-light"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[10px] mb-1 font-mono">
+                        <span className={isTeo ? "text-laranja font-semibold" : "text-aco"}>
+                          {isTeo ? "Téo (Turno)" : "Cliente"}
+                        </span>
+                        <span className={isTeo ? "text-zinc-400" : "text-aco"}>
+                          {msg.time}
+                        </span>
+                      </div>
+
+                      {msg.isAudio && (
+                        <div className="flex items-center gap-2 p-1.5 mb-1.5 rounded bg-white/10 text-zinc-200 text-[11px] font-mono">
+                          <Volume2 className="w-3.5 h-3.5 text-laranja shrink-0" strokeWidth={1.5} />
+                          <span>{msg.audioDuration}</span>
+                        </div>
+                      )}
+
+                      {msg.hasImage && (
+                        <div className="p-1.5 mb-1.5 rounded bg-white border border-aco-light text-grafite text-[11px] font-mono">
+                          {msg.imageLabel}
+                        </div>
+                      )}
+
+                      <p className="leading-relaxed">{msg.text}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="space-y-3 text-xs font-mono">
-              <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                <span className="text-[10px] text-aco block uppercase">CLIENTE & DOCUMENTO</span>
-                <p className="font-bold text-grafite text-xs mt-0.5">{current.os.client}</p>
-                <p className="text-[11px] text-aco">{current.os.document}</p>
-              </div>
-
-              <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                <span className="text-[10px] text-aco block uppercase">ENDEREÇO DE EXECUÇÃO</span>
-                <p className="text-xs text-grafite font-semibold mt-0.5">{current.os.address}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                  <span className="text-[10px] text-aco block uppercase">EQUIPAMENTO</span>
-                  <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.equipment}</p>
+            {/* Right Column: Resulting Structured Ordem de Serviço */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.18, delay: 0.08 }}
+              className="lg:col-span-6 bg-white border-2 border-grafite rounded-[12px] p-5 shadow-sm"
+            >
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-[6px] bg-laranja text-white flex items-center justify-center font-mono text-xs font-bold">
+                    OS
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase font-archivo text-grafite">
+                      Ordem de Serviço Gerada
+                    </h4>
+                    <p className="text-[10px] font-mono text-aco">
+                      Alimentada no sistema automaticamente
+                    </p>
+                  </div>
                 </div>
-                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                  <span className="text-[10px] text-aco block uppercase">TIPO DE SERVIÇO</span>
-                  <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.serviceType}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                  <span className="text-[10px] text-aco block uppercase">TÉCNICO RESPONSÁVEL</span>
-                  <p className="text-[11px] font-bold text-laranja mt-0.5">{current.os.technician}</p>
-                </div>
-                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
-                  <span className="text-[10px] text-aco block uppercase">HORÁRIO CONFIRMADO</span>
-                  <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.scheduleTime}</p>
+                <div className="text-right">
+                  <span className="font-mono text-sm font-bold text-laranja block">
+                    {current.os.number}
+                  </span>
+                  <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    {current.os.status}
+                  </span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-[8px] bg-emerald-50 border border-emerald-200 text-emerald-900">
-                <span className="text-[10px] text-emerald-700 block uppercase font-bold">
-                  VALOR ESTIMADO / TABELA
-                </span>
-                <p className="text-xs font-bold mt-0.5">{current.os.estimatedValue}</p>
+              <div className="space-y-3 text-xs font-mono">
+                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                  <span className="text-[10px] text-aco block uppercase">CLIENTE & DOCUMENTO</span>
+                  <p className="font-bold text-grafite text-xs mt-0.5">{current.os.client}</p>
+                  <p className="text-[11px] text-aco">{current.os.document}</p>
+                </div>
+
+                <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                  <span className="text-[10px] text-aco block uppercase">ENDEREÇO DE EXECUÇÃO</span>
+                  <p className="text-xs text-grafite font-semibold mt-0.5">{current.os.address}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                    <span className="text-[10px] text-aco block uppercase">EQUIPAMENTO</span>
+                    <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.equipment}</p>
+                  </div>
+                  <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                    <span className="text-[10px] text-aco block uppercase">TIPO DE SERVIÇO</span>
+                    <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.serviceType}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                    <span className="text-[10px] text-aco block uppercase">TÉCNICO RESPONSÁVEL</span>
+                    <p className="text-[11px] font-bold text-laranja mt-0.5">{current.os.technician}</p>
+                  </div>
+                  <div className="p-2.5 rounded-[8px] bg-bancada border border-aco-light">
+                    <span className="text-[10px] text-aco block uppercase">HORÁRIO CONFIRMADO</span>
+                    <p className="text-[11px] font-bold text-grafite mt-0.5">{current.os.scheduleTime}</p>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-[8px] bg-emerald-50 border border-emerald-200 text-emerald-900">
+                  <span className="text-[10px] text-emerald-700 block uppercase font-bold">
+                    VALOR ESTIMADO / TABELA
+                  </span>
+                  <p className="text-xs font-bold mt-0.5">{current.os.estimatedValue}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-4 pt-3 border-t border-aco-light flex items-center justify-between text-[11px] text-aco font-mono">
-              <span>Notificação enviada ao técnico via WhatsApp</span>
-              <span className="text-emerald-700 font-bold">100% Completa</span>
-            </div>
-          </div>
-
-        </div>
+              <div className="mt-4 pt-3 border-t border-aco-light flex items-center justify-between text-[11px] text-aco font-mono">
+                <span>Notificação enviada ao técnico via WhatsApp</span>
+                <span className="text-emerald-700 font-bold">100% Completa</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
       </div>
     </section>
