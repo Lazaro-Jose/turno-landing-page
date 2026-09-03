@@ -3,21 +3,45 @@
 import { useState } from "react";
 import {
   MessageSquare,
-  FileText,
-  Clock,
-  MapPin,
-  User,
-  Wrench,
-  CheckCircle,
-  FileSpreadsheet,
-  PhoneCall,
   Volume2,
 } from "lucide-react";
+
+interface ChatMessage {
+  sender: "cliente" | "teo";
+  time: string;
+  text: string;
+  isAudio?: boolean;
+  audioDuration?: string;
+  hasImage?: boolean;
+  imageLabel?: string;
+}
+
+interface OSData {
+  number: string;
+  status: string;
+  client: string;
+  document: string;
+  address: string;
+  equipment: string;
+  symptom: string;
+  serviceType: string;
+  technician: string;
+  scheduleTime: string;
+  estimatedValue: string;
+}
+
+interface WorkflowScenario {
+  id: string;
+  tabTitle: string;
+  subtitle: string;
+  whatsapp: ChatMessage[];
+  os: OSData;
+}
 
 export function LiveWorkflow() {
   const [activeScenario, setActiveScenario] = useState<number>(0);
 
-  const scenarios = [
+  const scenarios: WorkflowScenario[] = [
     {
       id: "corretiva",
       tabTitle: "01. Manutenção Corretiva (HVAC)",
