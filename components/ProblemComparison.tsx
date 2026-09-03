@@ -192,7 +192,7 @@ export function ProblemComparison() {
             </div>
           </motion.div>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>
