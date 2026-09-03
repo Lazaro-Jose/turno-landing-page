@@ -1,4 +1,7 @@
+"use client";
+
 import { MessageSquare, Wrench, Calendar, FileCheck, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function HowItWorks() {
   const steps = [
@@ -56,12 +59,37 @@ export function HowItWorks() {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.2, ease: "easeOut" as const },
+    },
+  };
+
   return (
     <section id="como-funciona" className="py-16 md:py-24 bg-white border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-12 sm:mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bancada border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             FLUXO OPERACIONAL
           </div>
@@ -72,16 +100,24 @@ export function HowItWorks() {
             Nada de configurações complexas. O Téo atua como um funcionário que
             conhece a rotina de serviços técnicos e cuida do atendimento sem você precisar intervir.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 4 Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, idx) => {
+        {/* 4 Steps Grid with Staggered Entrance */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {steps.map((step) => {
             const Icon = step.icon;
             return (
-              <div
+              <motion.div
                 key={step.number}
-                className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between hover:border-aco transition-colors relative"
+                variants={itemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.15 } }}
+                className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between hover:border-aco transition-all hover:shadow-[0_4px_12px_rgba(16,20,24,0.03)] relative group"
               >
                 <div>
                   {/* Step Number & Badge */}
@@ -89,7 +125,7 @@ export function HowItWorks() {
                     <span className="font-mono text-2xl font-bold text-laranja">
                       {step.number}
                     </span>
-                    <div className="w-9 h-9 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite">
+                    <div className="w-9 h-9 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite group-hover:border-laranja/40 transition-colors">
                       <Icon className="w-5 h-5" strokeWidth={1.5} />
                     </div>
                   </div>
@@ -98,7 +134,7 @@ export function HowItWorks() {
                     {step.tag}
                   </span>
 
-                  <h3 className="text-lg font-bold text-grafite mb-3">
+                  <h3 className="text-lg font-bold text-grafite mb-3 font-archivo">
                     {step.title}
                   </h3>
 
@@ -118,13 +154,19 @@ export function HowItWorks() {
                     ))}
                   </ul>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Bottom Banner */}
-        <div className="mt-12 p-6 rounded-[8px] bg-[#101418] text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+          className="mt-12 p-6 rounded-[8px] bg-[#101418] text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-zinc-800"
+        >
           <div>
             <p className="text-xs font-mono text-laranja uppercase tracking-wider font-semibold mb-1">
               Velocidade Operacional
@@ -135,12 +177,12 @@ export function HowItWorks() {
           </div>
           <a
             href="#demonstracao"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-all duration-150 active:scale-[0.98] shrink-0"
           >
             <span>Ver demonstração prática</span>
             <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
           </a>
-        </div>
+        </motion.div>
 
       </div>
     </section>
