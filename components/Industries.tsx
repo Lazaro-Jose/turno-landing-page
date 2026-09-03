@@ -1,4 +1,7 @@
-import { Airplay, Wrench, Zap, Building2, Flame, ShieldAlert } from "lucide-react";
+"use client";
+
+import { Airplay, Wrench, Zap, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function Industries() {
   const industries = [
@@ -52,12 +55,37 @@ export function Industries() {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.2, ease: "easeOut" as const },
+    },
+  };
+
   return (
     <section id="setores" className="py-16 md:py-24 bg-white border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-12 sm:mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bancada border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             SETORES ATENDIDOS
           </div>
@@ -68,20 +96,28 @@ export function Industries() {
             O Téo foi desenvolvido para o vocabulário, as dúvidas e a dinâmica real
             de empresas que dependem de técnicos na rua e clientes exigindo rapidez.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Industries Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Industries Grid with Staggered Entrance */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {industries.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
+              <motion.div
                 key={idx}
-                className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between hover:border-aco transition-colors"
+                variants={itemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.15 } }}
+                className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between hover:border-aco transition-all hover:shadow-[0_4px_12px_rgba(16,20,24,0.03)] group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite">
+                    <div className="w-10 h-10 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite group-hover:border-laranja/40 transition-colors">
                       <Icon className="w-5 h-5" strokeWidth={1.5} />
                     </div>
                     <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-white border border-aco-light text-aco uppercase">
@@ -89,7 +125,7 @@ export function Industries() {
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-grafite mb-2">
+                  <h3 className="text-xl font-bold text-grafite mb-2 font-archivo">
                     {item.title}
                   </h3>
 
@@ -111,10 +147,10 @@ export function Industries() {
                     ))}
                   </ul>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
       </div>
     </section>
