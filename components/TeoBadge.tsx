@@ -1,13 +1,9 @@
+"use client";
+
 import {
   Check,
-  ShieldCheck,
-  UserCheck,
-  CalendarCheck,
-  Clock,
-  Sparkles,
-  Award,
-  Layers,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function TeoBadge() {
   const skills = [
@@ -19,12 +15,37 @@ export function TeoBadge() {
     "Follow-up de orçamentos e confirmação de presença do cliente",
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.18, ease: "easeOut" as const },
+    },
+  };
+
   return (
     <section id="cracha" className="py-16 md:py-24 bg-bancada border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-12 sm:mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             PERFIL DO FUNCIONÁRIO DIGITAL
           </div>
@@ -36,14 +57,23 @@ export function TeoBadge() {
             Você não precisa de mais um sistema cheio de botões para preencher manualmente.
             O Téo entra na sua operação, assume a recepção do WhatsApp e faz o trabalho chato.
           </p>
-        </div>
+        </motion.div>
 
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Left Column: Visual Badge / Crachá */}
-          <div className="lg:col-span-5 w-full flex justify-center">
-            <div className="w-full max-w-sm bg-white border-2 border-grafite rounded-[12px] p-6 shadow-sm relative">
+          {/* Left Column: Visual Badge / Crachá with Motion */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="lg:col-span-5 w-full flex justify-center"
+          >
+            <motion.div
+              whileHover={{ y: -6, transition: { duration: 0.15 } }}
+              className="w-full max-w-sm bg-white border-2 border-grafite rounded-[12px] p-6 shadow-sm hover:shadow-md transition-shadow relative"
+            >
               {/* Lanyard Clip / Furo do Crachá */}
               <div className="w-16 h-3 bg-aco-light border border-aco mx-auto rounded-full mb-6 -mt-2" />
 
@@ -67,15 +97,16 @@ export function TeoBadge() {
                 </span>
               </div>
 
-              {/* Avatar do Crachá (Sem rosto humano falso - símbolo de crachá institucional) */}
+              {/* Avatar do Crachá */}
               <div className="my-6 text-center">
                 <div className="w-24 h-24 mx-auto rounded-[12px] bg-grafite text-white flex flex-col items-center justify-center border-2 border-laranja relative">
                   <span className="text-2xl font-bold font-archivo tracking-tight">TÉO</span>
                   <span className="text-[9px] font-mono text-laranja uppercase tracking-widest mt-1">
                     DIGITAL
                   </span>
-                  <div className="absolute -bottom-2.5 px-2 py-0.5 rounded-full bg-emerald-600 text-[9px] font-mono text-white font-bold tracking-wider uppercase">
-                    ATIVO
+                  <div className="absolute -bottom-2.5 px-2 py-0.5 rounded-full bg-emerald-600 text-[9px] font-mono text-white font-bold tracking-wider uppercase flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    <span>ATIVO</span>
                   </div>
                 </div>
 
@@ -112,11 +143,17 @@ export function TeoBadge() {
                 <span>Turno Serviços LTDA</span>
                 <span className="text-grafite font-semibold">Emitido em 2026</span>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right Column: Practical Benefits & Operational Reality */}
-          <div className="lg:col-span-7 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.2, delay: 0.08, ease: "easeOut" }}
+            className="lg:col-span-7 space-y-6"
+          >
             <div className="bg-white border border-aco-light rounded-[8px] p-6">
               <h3 className="text-lg font-bold text-grafite font-archivo mb-3">
                 O que o Téo entrega no primeiro dia de trabalho:
@@ -127,17 +164,24 @@ export function TeoBadge() {
                 padronizando seu atendimento com o rigor que a sua empresa precisa.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
                 {skills.map((skill, index) => (
-                  <div
+                  <motion.div
                     key={index}
-                    className="flex items-start gap-2.5 p-3 rounded-[8px] bg-bancada border border-aco-light/80 text-xs text-grafite"
+                    variants={itemVariants}
+                    className="flex items-start gap-2.5 p-3 rounded-[8px] bg-bancada border border-aco-light/80 text-xs text-grafite hover:border-aco transition-colors"
                   >
                     <Check className="w-4 h-4 text-laranja shrink-0 mt-0.5" strokeWidth={1.5} />
                     <span>{skill}</span>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* Quick Contrast Box */}
@@ -159,7 +203,7 @@ export function TeoBadge() {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
 
