@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -48,7 +49,13 @@ export function FAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 text-center mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="max-w-3xl mb-12 text-center mx-auto"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             DÚVIDAS FREQUENTES
           </div>
@@ -58,15 +65,19 @@ export function FAQ() {
           <p className="text-base text-aco leading-relaxed">
             Respostas diretas e sem enrolação sobre a contratação e funcionamento do Téo.
           </p>
-        </div>
+        </motion.div>
 
-        {/* FAQ Accordion List */}
+        {/* FAQ Accordion List with AnimatePresence */}
         <div className="space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.18, delay: index * 0.04 }}
                 className="bg-white border border-aco-light rounded-[8px] overflow-hidden transition-colors"
               >
                 <button
@@ -86,12 +97,22 @@ export function FAQ() {
                   />
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-aco leading-relaxed border-t border-aco-light/60">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.18, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-aco leading-relaxed border-t border-aco-light/60">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>
