@@ -15,6 +15,9 @@ import {
   AlertCircle,
   Mail,
   Phone,
+  FileText,
+  Building,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm, Controller, useWatch } from "react-hook-form";
@@ -22,6 +25,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FadeIn, FadeInStagger, FadeInStaggerItem } from "./animations/MotionWrapper";
 import { CustomSelect, SelectOption } from "./ui/CustomSelect";
+import { formatCpf, formatCnpj, isValidCpf, isValidCnpj } from "@/lib/documents";
+import { preRegisterTenant } from "@/lib/preRegistration";
 
 // Phone mask helper for Brazilian numbers: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
 function formatPhone(value: string): string {
@@ -49,6 +54,14 @@ const formSchema = z
       .string()
       .min(2, "Informe o nome da sua empresa.")
       .max(80, "Nome da empresa muito longo."),
+    cpf: z
+      .string()
+      .min(1, "Informe o CPF de quem está cadastrando.")
+      .refine(isValidCpf, { message: "CPF inválido. Confira os números digitados." }),
+    cnpj: z
+      .string()
+      .min(1, "Informe o CNPJ da empresa.")
+      .refine(isValidCnpj, { message: "CNPJ inválido. Confira os números digitados." }),
     email: z
       .string()
       .min(1, "Informe seu e-mail profissional.")
@@ -82,8 +95,14 @@ const formSchema = z
 
 type FormData = z.infer<typeof formSchema>;
 
+type SubmissionState =
+  | { kind: "idle" }
+  | { kind: "registered" }
+  | { kind: "already-registered" }
+  | { kind: "failed"; message: string };
+
 export function CTASection() {
-  const [submitted, setSubmitted] = useState(false);
+  const [submission, setSubmission] = useState<SubmissionState>({ kind: "idle" });
 
   const {
     register,
@@ -97,6 +116,8 @@ export function CTASection() {
     defaultValues: {
       nome: "",
       empresa: "",
+      cpf: "",
+      cnpj: "",
       email: "",
       whatsapp: "",
       tecnicos: "1-5",
@@ -108,11 +129,45 @@ export function CTASection() {
 
   const selectedSegmento = useWatch({ control, name: "segmento" });
   const currentPhone = useWatch({ control, name: "whatsapp" });
+  const currentCpf = useWatch({ control, name: "cpf" });
+  const currentCnpj = useWatch({ control, name: "cnpj" });
 
-  const onSubmit = (data: FormData) => {
-    // Lead capture simulation
-    console.log("Lead captured:", data);
-    setSubmitted(true);
+  const onSubmit = async (data: FormData) => {
+    // O segmento vai como o rótulo que o visitante leu, não como o slug do
+    // select: quem for triar o lead lê "Climatização e HVAC", não "climatizacao".
+    const segment =
+      data.segmento === "outros"
+        ? (data.outroSegmento ?? "").trim()
+        : (segmentoOptions.find((option) => option.value === data.segmento)?.label ?? data.segmento);
+
+    const result = await preRegisterTenant({
+      companyName: data.empresa,
+      cnpj: data.cnpj,
+      registerName: data.nome,
+      registerCpf: data.cpf,
+      phone: data.whatsapp,
+      email: data.email,
+      numberOfTechnicians: data.tecnicos,
+      segment,
+    });
+
+    switch (result.outcome) {
+      case "registered":
+        setSubmission({ kind: "registered" });
+        return;
+      case "already-registered":
+        setSubmission({ kind: "already-registered" });
+        return;
+      case "invalid":
+        setSubmission({ kind: "failed", message: result.message });
+        return;
+      case "unavailable":
+        setSubmission({
+          kind: "failed",
+          message:
+            "Não conseguimos falar com nosso servidor agora. Tente de novo em instantes.",
+        });
+    }
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,9 +175,17 @@ export function CTASection() {
     setValue("whatsapp", formatted, { shouldValidate: true });
   };
 
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cpf", formatCpf(e.target.value), { shouldValidate: true });
+  };
+
+  const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cnpj", formatCnpj(e.target.value), { shouldValidate: true });
+  };
+
   const handleReset = () => {
     reset();
-    setSubmitted(false);
+    setSubmission({ kind: "idle" });
   };
 
   const tecnicosOptions: SelectOption[] = [
@@ -286,7 +349,7 @@ export function CTASection() {
               </div>
 
               <AnimatePresence mode="wait">
-                {submitted ? (
+                {submission.kind === "registered" || submission.kind === "already-registered" ? (
                   <motion.div
                     key="success"
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -299,11 +362,14 @@ export function CTASection() {
                       <CheckCircle2 className="w-6 h-6" strokeWidth={2} />
                     </div>
                     <h4 className="text-base font-bold text-emerald-900 font-archivo">
-                      Solicitação Recebida com Sucesso!
+                      {submission.kind === "registered"
+                        ? "Solicitação Recebida com Sucesso!"
+                        : "Sua empresa já está com a gente."}
                     </h4>
                     <p className="text-xs text-emerald-800 leading-relaxed">
-                      O Téo já encaminhou seus dados para nosso especialista em operações.
-                      Entraremos em contato pelo seu WhatsApp em poucos minutos.
+                      {submission.kind === "registered"
+                        ? "O Téo já encaminhou seus dados para nosso especialista em operações. Entraremos em contato pelo seu WhatsApp em poucos minutos."
+                        : "Já recebemos um cadastro para esse CNPJ e ele está na fila do nosso time. Não precisa enviar de novo."}
                     </p>
                     <button
                       type="button"
@@ -370,7 +436,66 @@ export function CTASection() {
                       </div>
                     </div>
 
-                    {/* Row 2: WhatsApp (com máscara) & E-mail Profissional */}
+                    {/* Row 2: CPF de quem cadastra & CNPJ da empresa */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold font-archivo text-grafite mb-1 uppercase tracking-wide">
+                          Seu CPF *
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="000.000.000-00"
+                            value={currentCpf || ""}
+                            onChange={handleCpfChange}
+                            maxLength={14}
+                            className={`w-full px-3.5 py-2.5 pl-9 rounded-[8px] bg-white border text-xs text-grafite focus:outline-none transition-colors font-mono ${
+                              errors.cpf
+                                ? "border-red-500 focus:border-red-600"
+                                : "border-aco-light focus:border-grafite"
+                            }`}
+                          />
+                          <FileText className="w-4 h-4 text-aco absolute left-3 top-3" strokeWidth={1.5} />
+                        </div>
+                        {errors.cpf && (
+                          <p className="text-[11px] text-red-500 font-mono flex items-center gap-1 mt-1">
+                            <AlertCircle className="w-3 h-3 shrink-0" />
+                            <span>{errors.cpf.message}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold font-archivo text-grafite mb-1 uppercase tracking-wide">
+                          CNPJ da Empresa *
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="00.000.000/0000-00"
+                            value={currentCnpj || ""}
+                            onChange={handleCnpjChange}
+                            maxLength={18}
+                            className={`w-full px-3.5 py-2.5 pl-9 rounded-[8px] bg-white border text-xs text-grafite focus:outline-none transition-colors font-mono ${
+                              errors.cnpj
+                                ? "border-red-500 focus:border-red-600"
+                                : "border-aco-light focus:border-grafite"
+                            }`}
+                          />
+                          <Building className="w-4 h-4 text-aco absolute left-3 top-3" strokeWidth={1.5} />
+                        </div>
+                        {errors.cnpj && (
+                          <p className="text-[11px] text-red-500 font-mono flex items-center gap-1 mt-1">
+                            <AlertCircle className="w-3 h-3 shrink-0" />
+                            <span>{errors.cnpj.message}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Row 3: WhatsApp (com máscara) & E-mail Profissional */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold font-archivo text-grafite mb-1 uppercase tracking-wide">
@@ -491,15 +616,48 @@ export function CTASection() {
                       )}
                     </AnimatePresence>
 
+                    {/* Falha vinda do servidor: o formulário continua preenchido, para
+                        que reenviar seja um clique e não digitar tudo de novo. */}
+                    <AnimatePresence>
+                      {submission.kind === "failed" && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div
+                            role="alert"
+                            className="flex items-start gap-2 p-3 rounded-[8px] bg-red-50 border border-red-200"
+                          >
+                            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" strokeWidth={1.5} />
+                            <span className="text-[11px] text-red-800 leading-relaxed">
+                              {submission.message}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <motion.button
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
+                      whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                      whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-colors shadow-none cursor-pointer disabled:opacity-60"
+                      className="w-full mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-colors shadow-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      <span>Solicitar Demonstração do Téo</span>
-                      <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
+                          <span>Enviando…</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Solicitar Demonstração do Téo</span>
+                          <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                        </>
+                      )}
                     </motion.button>
 
                     <div className="flex items-center justify-center gap-2 text-[11px] text-aco font-mono pt-2">
