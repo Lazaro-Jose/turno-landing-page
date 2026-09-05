@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  MessageSquare,
-  Volume2,
-} from "lucide-react";
+import { MessageSquare, Volume2, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FadeIn } from "./animations/MotionWrapper";
 
 interface ChatMessage {
   sender: "cliente" | "teo";
@@ -196,13 +194,7 @@ export function LiveWorkflow() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mb-10"
-        >
+        <FadeIn className="max-w-3xl mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             DEMONSTRAÇÃO PRÁTICA
           </div>
@@ -213,40 +205,38 @@ export function LiveWorkflow() {
             Clique nos cenários abaixo e veja como uma conversa informal no WhatsApp
             se transforma em uma Ordem de Serviço estruturada sem intervenção manual.
           </p>
-        </motion.div>
+        </FadeIn>
 
         {/* Scenario Selector Tabs */}
-        <div className="flex flex-wrap gap-2 sm:gap-3 mb-8">
-          {scenarios.map((sc, index) => {
-            const isActive = activeScenario === index;
-            return (
-              <button
-                key={sc.id}
-                onClick={() => setActiveScenario(index)}
-                className={`relative px-4 py-2.5 rounded-[8px] text-xs sm:text-sm font-semibold transition-all ${
-                  isActive
-                    ? "bg-grafite text-white shadow-none"
-                    : "bg-white border border-aco-light text-aco hover:text-grafite hover:bg-aco-subtle"
-                }`}
-              >
-                {sc.tabTitle}
-              </button>
-            );
-          })}
-        </div>
+        <FadeIn delay={0.05} className="flex flex-wrap gap-2 sm:gap-3 mb-8">
+          {scenarios.map((sc, index) => (
+            <button
+              key={sc.id}
+              onClick={() => setActiveScenario(index)}
+              className={`relative px-4 py-2.5 rounded-[8px] text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                activeScenario === index
+                  ? "bg-grafite text-white shadow-xs"
+                  : "bg-white border border-aco-light text-aco hover:text-grafite hover:bg-aco-subtle"
+              }`}
+            >
+              {sc.tabTitle}
+            </button>
+          ))}
+        </FadeIn>
 
-        {/* Workflow Showcase Grid with Animated Transition */}
+        {/* Workflow Showcase Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={current.id}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
             className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
           >
+            
             {/* Left Column: WhatsApp Interaction Flow */}
-            <div className="lg:col-span-6 bg-white border border-aco-light rounded-[12px] p-5">
+            <div className="lg:col-span-6 bg-white border border-aco-light rounded-[12px] p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center">
@@ -272,9 +262,9 @@ export function LiveWorkflow() {
                   return (
                     <motion.div
                       key={mIdx}
-                      initial={{ opacity: 0, y: 6 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.15, delay: mIdx * 0.04 }}
+                      transition={{ delay: mIdx * 0.05, duration: 0.2 }}
                       className={`p-3 rounded-[8px] text-xs ${
                         isTeo
                           ? "bg-[#101418] text-white ml-auto max-w-[90%] border border-zinc-800"
@@ -314,8 +304,8 @@ export function LiveWorkflow() {
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.18, delay: 0.08 }}
-              className="lg:col-span-6 bg-white border-2 border-grafite rounded-[12px] p-5 shadow-sm"
+              transition={{ delay: 0.1, duration: 0.25 }}
+              className="lg:col-span-6 bg-white border-2 border-grafite rounded-[12px] p-5 shadow-xs"
             >
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-aco-light">
                 <div className="flex items-center gap-2">
@@ -384,10 +374,14 @@ export function LiveWorkflow() {
               </div>
 
               <div className="mt-4 pt-3 border-t border-aco-light flex items-center justify-between text-[11px] text-aco font-mono">
-                <span>Notificação enviada ao técnico via WhatsApp</span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  Notificação enviada ao técnico via WhatsApp
+                </span>
                 <span className="text-emerald-700 font-bold">100% Completa</span>
               </div>
             </motion.div>
+
           </motion.div>
         </AnimatePresence>
 

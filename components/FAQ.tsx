@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FadeIn, FadeInStagger, FadeInStaggerItem } from "./animations/MotionWrapper";
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -49,13 +50,7 @@ export function FAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mb-12 text-center mx-auto"
-        >
+        <FadeIn className="max-w-3xl mb-12 text-center mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             DÚVIDAS FREQUENTES
           </div>
@@ -65,57 +60,56 @@ export function FAQ() {
           <p className="text-base text-aco leading-relaxed">
             Respostas diretas e sem enrolação sobre a contratação e funcionamento do Téo.
           </p>
-        </motion.div>
+        </FadeIn>
 
-        {/* FAQ Accordion List with AnimatePresence */}
-        <div className="space-y-3">
+        {/* FAQ Accordion List */}
+        <FadeInStagger className="space-y-3" staggerDelay={0.06}>
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.18, delay: index * 0.04 }}
-                className="bg-white border border-aco-light rounded-[8px] overflow-hidden transition-colors"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(index)}
-                  className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 hover:bg-aco-subtle/50 transition-colors"
-                  aria-expanded={isOpen}
+              <FadeInStaggerItem key={index}>
+                <div
+                  className={`bg-white border rounded-[8px] overflow-hidden transition-colors ${
+                    isOpen ? "border-grafite/40 shadow-xs" : "border-aco-light hover:border-aco"
+                  }`}
                 >
-                  <span className="text-sm sm:text-base font-bold text-grafite font-archivo">
-                    {faq.question}
-                  </span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-aco shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-laranja" : ""
-                    }`}
-                    strokeWidth={1.5}
-                  />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => toggle(index)}
+                    className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 transition-colors cursor-pointer"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="text-sm sm:text-base font-bold text-grafite font-archivo">
+                      {faq.question}
+                    </span>
+                    <ChevronDown
+                      className={`w-5 h-5 text-aco shrink-0 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-laranja" : ""
+                      }`}
+                      strokeWidth={1.5}
+                    />
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.18, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-aco leading-relaxed border-t border-aco-light/60">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-aco leading-relaxed border-t border-aco-light/60">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </FadeInStaggerItem>
             );
           })}
-        </div>
+        </FadeInStagger>
 
       </div>
     </section>

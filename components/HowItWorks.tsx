@@ -2,6 +2,7 @@
 
 import { MessageSquare, Wrench, Calendar, FileCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { FadeIn, FadeInStagger, FadeInStaggerItem } from "./animations/MotionWrapper";
 
 export function HowItWorks() {
   const steps = [
@@ -59,37 +60,12 @@ export function HowItWorks() {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.2, ease: "easeOut" as const },
-    },
-  };
-
   return (
     <section id="como-funciona" className="py-16 md:py-24 bg-white border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mb-12 sm:mb-16"
-        >
+        <FadeIn className="max-w-3xl mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bancada border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             FLUXO OPERACIONAL
           </div>
@@ -100,89 +76,82 @@ export function HowItWorks() {
             Nada de configurações complexas. O Téo atua como um funcionário que
             conhece a rotina de serviços técnicos e cuida do atendimento sem você precisar intervir.
           </p>
-        </motion.div>
+        </FadeIn>
 
-        {/* 4 Steps Grid with Staggered Entrance */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        {/* 4 Steps Grid with Stagger */}
+        <FadeInStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.08}>
           {steps.map((step) => {
             const Icon = step.icon;
             return (
-              <motion.div
-                key={step.number}
-                variants={itemVariants}
-                whileHover={{ y: -4, transition: { duration: 0.15 } }}
-                className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between hover:border-aco transition-all hover:shadow-[0_4px_12px_rgba(16,20,24,0.03)] relative group"
-              >
-                <div>
-                  {/* Step Number & Badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-mono text-2xl font-bold text-laranja">
-                      {step.number}
-                    </span>
-                    <div className="w-9 h-9 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite group-hover:border-laranja/40 transition-colors">
-                      <Icon className="w-5 h-5" strokeWidth={1.5} />
+              <FadeInStaggerItem key={step.number} className="h-full">
+                <motion.div
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-bancada border border-aco-light rounded-[8px] p-6 flex flex-col justify-between h-full hover:border-aco transition-colors relative"
+                >
+                  <div>
+                    {/* Step Number & Badge */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-mono text-2xl font-bold text-laranja">
+                        {step.number}
+                      </span>
+                      <div className="w-9 h-9 rounded-[8px] bg-white border border-aco-light flex items-center justify-center text-grafite">
+                        <Icon className="w-5 h-5" strokeWidth={1.5} />
+                      </div>
                     </div>
+
+                    <span className="text-[10px] font-mono font-semibold text-aco uppercase tracking-wider block mb-1">
+                      {step.tag}
+                    </span>
+
+                    <h3 className="text-lg font-bold text-grafite mb-3">
+                      {step.title}
+                    </h3>
+
+                    <p className="text-xs text-aco leading-relaxed mb-6">
+                      {step.description}
+                    </p>
                   </div>
 
-                  <span className="text-[10px] font-mono font-semibold text-aco uppercase tracking-wider block mb-1">
-                    {step.tag}
-                  </span>
-
-                  <h3 className="text-lg font-bold text-grafite mb-3 font-archivo">
-                    {step.title}
-                  </h3>
-
-                  <p className="text-xs text-aco leading-relaxed mb-6">
-                    {step.description}
-                  </p>
-                </div>
-
-                {/* Details list */}
-                <div className="pt-4 border-t border-aco-light">
-                  <ul className="space-y-2 text-[11px] text-grafite">
-                    {step.details.map((detail, dIdx) => (
-                      <li key={dIdx} className="flex items-start gap-2">
-                        <span className="text-laranja font-mono font-bold">•</span>
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
+                  {/* Details list */}
+                  <div className="pt-4 border-t border-aco-light">
+                    <ul className="space-y-2 text-[11px] text-grafite">
+                      {step.details.map((detail, dIdx) => (
+                        <li key={dIdx} className="flex items-start gap-2">
+                          <span className="text-laranja font-mono font-bold">•</span>
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              </FadeInStaggerItem>
             );
           })}
-        </motion.div>
+        </FadeInStagger>
 
         {/* Bottom Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
-          className="mt-12 p-6 rounded-[8px] bg-[#101418] text-white flex flex-col md:flex-row items-center justify-between gap-6 border border-zinc-800"
-        >
-          <div>
-            <p className="text-xs font-mono text-laranja uppercase tracking-wider font-semibold mb-1">
-              Velocidade Operacional
-            </p>
-            <h4 className="text-lg sm:text-xl font-bold font-archivo">
-              Do envio da mensagem pelo cliente à O.S. no celular do técnico em menos de 2 minutos.
-            </h4>
+        <FadeIn delay={0.15} className="mt-12">
+          <div className="p-6 rounded-[8px] bg-[#101418] text-white flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="text-xs font-mono text-laranja uppercase tracking-wider font-semibold mb-1">
+                Velocidade Operacional
+              </p>
+              <h4 className="text-lg sm:text-xl font-bold font-archivo">
+                Do envio da mensagem pelo cliente à O.S. no celular do técnico em menos de 2 minutos.
+              </h4>
+            </div>
+            <motion.a
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              href="#demonstracao"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-colors shrink-0"
+            >
+              <span>Ver demonstração prática</span>
+              <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+            </motion.a>
           </div>
-          <a
-            href="#demonstracao"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-[8px] bg-laranja hover:bg-laranja-hover text-white text-sm font-semibold transition-all duration-150 active:scale-[0.98] shrink-0"
-          >
-            <span>Ver demonstração prática</span>
-            <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-          </a>
-        </motion.div>
+        </FadeIn>
 
       </div>
     </section>

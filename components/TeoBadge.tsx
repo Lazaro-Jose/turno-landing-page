@@ -1,9 +1,8 @@
 "use client";
 
-import {
-  Check,
-} from "lucide-react";
+import { Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { FadeIn, FadeInStagger, FadeInStaggerItem } from "./animations/MotionWrapper";
 
 export function TeoBadge() {
   const skills = [
@@ -15,37 +14,12 @@ export function TeoBadge() {
     "Follow-up de orçamentos e confirmação de presença do cliente",
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.18, ease: "easeOut" as const },
-    },
-  };
-
   return (
     <section id="cracha" className="py-16 md:py-24 bg-bancada border-b border-aco-light">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-          className="max-w-3xl mb-12 sm:mb-16"
-        >
+        <FadeIn className="max-w-3xl mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-aco-light text-xs font-mono font-semibold text-aco mb-3">
             PERFIL DO FUNCIONÁRIO DIGITAL
           </div>
@@ -57,22 +31,17 @@ export function TeoBadge() {
             Você não precisa de mais um sistema cheio de botões para preencher manualmente.
             O Téo entra na sua operação, assume a recepção do WhatsApp e faz o trabalho chato.
           </p>
-        </motion.div>
+        </FadeIn>
 
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Left Column: Visual Badge / Crachá with Motion */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="lg:col-span-5 w-full flex justify-center"
-          >
+          {/* Left Column: Visual Badge / Crachá */}
+          <FadeIn direction="left" className="lg:col-span-5 w-full flex justify-center">
             <motion.div
-              whileHover={{ y: -6, transition: { duration: 0.15 } }}
-              className="w-full max-w-sm bg-white border-2 border-grafite rounded-[12px] p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              whileHover={{ y: -4, rotateZ: -0.5 }}
+              transition={{ duration: 0.25 }}
+              className="w-full max-w-sm bg-white border-2 border-grafite rounded-[12px] p-6 shadow-xs relative"
             >
               {/* Lanyard Clip / Furo do Crachá */}
               <div className="w-16 h-3 bg-aco-light border border-aco mx-auto rounded-full mb-6 -mt-2" />
@@ -97,16 +66,16 @@ export function TeoBadge() {
                 </span>
               </div>
 
-              {/* Avatar do Crachá */}
+              {/* Avatar do Crachá (Sem rosto humano falso - símbolo de crachá institucional) */}
               <div className="my-6 text-center">
-                <div className="w-24 h-24 mx-auto rounded-[12px] bg-grafite text-white flex flex-col items-center justify-center border-2 border-laranja relative">
+                <div className="w-24 h-24 mx-auto rounded-[12px] bg-grafite text-white flex flex-col items-center justify-center border-2 border-laranja relative shadow-xs">
                   <span className="text-2xl font-bold font-archivo tracking-tight">TÉO</span>
                   <span className="text-[9px] font-mono text-laranja uppercase tracking-widest mt-1">
                     DIGITAL
                   </span>
                   <div className="absolute -bottom-2.5 px-2 py-0.5 rounded-full bg-emerald-600 text-[9px] font-mono text-white font-bold tracking-wider uppercase flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    <span>ATIVO</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                    ATIVO
                   </div>
                 </div>
 
@@ -144,66 +113,56 @@ export function TeoBadge() {
                 <span className="text-grafite font-semibold">Emitido em 2026</span>
               </div>
             </motion.div>
-          </motion.div>
+          </FadeIn>
 
           {/* Right Column: Practical Benefits & Operational Reality */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.2, delay: 0.08, ease: "easeOut" }}
-            className="lg:col-span-7 space-y-6"
-          >
-            <div className="bg-white border border-aco-light rounded-[8px] p-6">
-              <h3 className="text-lg font-bold text-grafite font-archivo mb-3">
-                O que o Téo entrega no primeiro dia de trabalho:
-              </h3>
-              <p className="text-sm text-aco leading-relaxed mb-6">
-                Contratar e treinar um atendente comum leva em média 45 dias, além de custos
-                com encargos, férias e risco de turnover. O Téo entra rodando no mesmo dia,
-                padronizando seu atendimento com o rigor que a sua empresa precisa.
-              </p>
+          <div className="lg:col-span-7 space-y-6">
+            <FadeIn direction="right">
+              <div className="bg-white border border-aco-light rounded-[8px] p-6">
+                <h3 className="text-lg font-bold text-grafite font-archivo mb-3">
+                  O que o Téo entrega no primeiro dia de trabalho:
+                </h3>
+                <p className="text-sm text-aco leading-relaxed mb-6">
+                  Contratar e treinar um atendente comum leva em média 45 dias, além de custos
+                  com encargos, férias e risco de turnover. O Téo entra rodando no mesmo dia,
+                  padronizando seu atendimento com o rigor que a sua empresa precisa.
+                </p>
 
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-              >
-                {skills.map((skill, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    className="flex items-start gap-2.5 p-3 rounded-[8px] bg-bancada border border-aco-light/80 text-xs text-grafite hover:border-aco transition-colors"
-                  >
-                    <Check className="w-4 h-4 text-laranja shrink-0 mt-0.5" strokeWidth={1.5} />
-                    <span>{skill}</span>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
+                <FadeInStagger className="grid grid-cols-1 sm:grid-cols-2 gap-3" staggerDelay={0.06}>
+                  {skills.map((skill, index) => (
+                    <FadeInStaggerItem key={index}>
+                      <div className="flex items-start gap-2.5 p-3 rounded-[8px] bg-bancada border border-aco-light/80 text-xs text-grafite hover:border-aco transition-colors">
+                        <Check className="w-4 h-4 text-laranja shrink-0 mt-0.5" strokeWidth={2} />
+                        <span>{skill}</span>
+                      </div>
+                    </FadeInStaggerItem>
+                  ))}
+                </FadeInStagger>
+              </div>
+            </FadeIn>
 
             {/* Quick Contrast Box */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white border border-aco-light rounded-[8px] p-4">
-                <span className="text-[11px] font-mono text-aco block uppercase">
-                  Atendente Humano Sobrecarregado
-                </span>
-                <p className="text-xs text-grafite font-semibold mt-1">
-                  Atende 1 por vez, esquece recados após as 18h e depende de conferência constante.
-                </p>
+            <FadeIn delay={0.15}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-white border border-aco-light rounded-[8px] p-4">
+                  <span className="text-[11px] font-mono text-aco block uppercase">
+                    Atendente Humano Sobrecarregado
+                  </span>
+                  <p className="text-xs text-grafite font-semibold mt-1">
+                    Atende 1 por vez, esquece recados após as 18h e depende de conferência constante.
+                  </p>
+                </div>
+                <div className="bg-white border border-laranja/40 rounded-[8px] p-4 bg-laranja-light/20">
+                  <span className="text-[11px] font-mono text-laranja font-bold block uppercase">
+                    Téo no WhatsApp da Empresa
+                  </span>
+                  <p className="text-xs text-grafite font-semibold mt-1">
+                    Atende 50 clientes ao mesmo tempo, segue o checklist técnico e nunca esquece um chamado.
+                  </p>
+                </div>
               </div>
-              <div className="bg-white border border-laranja/40 rounded-[8px] p-4 bg-laranja-light/20">
-                <span className="text-[11px] font-mono text-laranja font-bold block uppercase">
-                  Téo no WhatsApp da Empresa
-                </span>
-                <p className="text-xs text-grafite font-semibold mt-1">
-                  Atende 50 clientes ao mesmo tempo, segue o checklist técnico e nunca esquece um chamado.
-                </p>
-              </div>
-            </div>
-          </motion.div>
+            </FadeIn>
+          </div>
 
         </div>
 
