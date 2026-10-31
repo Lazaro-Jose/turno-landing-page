@@ -1,13 +1,12 @@
 /**
- * A chamada ao gateway para pré-registrar uma empresa vinda da landing page.
+ * A chamada para pré-registrar uma empresa vinda da landing page.
  *
- * Todo tráfego passa pelo gateway; a landing page não conhece o endereço do
- * turno-users nem de nenhum outro microservice. Trocar de porta, de host ou
- * quebrar o serviço em dois não muda nada aqui.
+ * O navegador fala só com a rota same-origin do próprio Next. É ela, no
+ * servidor, que grava no Supabase: endereço e chave do banco nunca chegam
+ * aqui nem aparecem nas requisições do navegador.
  */
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_TURNO_GATEWAY_URL ?? "http://localhost:8090";
-const PRE_REGISTRATION_PATH = "/api/users/tenants/pre-registrations";
+const PRE_REGISTRATION_PATH = "/api/pre-registrations";
 
 export interface PreRegistrationPayload {
   companyName: string;
@@ -38,13 +37,13 @@ export async function preRegisterTenant(
   let response: Response;
 
   try {
-    response = await fetch(`${GATEWAY_URL}${PRE_REGISTRATION_PATH}`, {
+    response = await fetch(PRE_REGISTRATION_PATH, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
   } catch {
-    // Rede fora, gateway parado ou CORS recusado: nada chegou ao servidor.
+    // Rede fora ou servidor parado: nada chegou ao servidor.
     return { outcome: "unavailable" };
   }
 
