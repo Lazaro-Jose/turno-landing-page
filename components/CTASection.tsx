@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   CheckCircle2,
@@ -659,6 +660,18 @@ export function CTASection() {
                         </>
                       )}
                     </motion.button>
+
+                    <p className="text-[11px] text-aco text-center leading-relaxed pt-1">
+                      Ao enviar, você concorda com os{" "}
+                      <Link href="/termos" target="_blank" className="underline hover:text-grafite">
+                        Termos de Uso
+                      </Link>{" "}
+                      e com a{" "}
+                      <Link href="/privacidade" target="_blank" className="underline hover:text-grafite">
+                        Política de Privacidade
+                      </Link>
+                      .
+                    </p>
 
                     <div className="flex items-center justify-center gap-2 text-[11px] text-aco font-mono pt-2">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" strokeWidth={1.5} />

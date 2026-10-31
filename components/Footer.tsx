@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Mail } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_HREF } from "@/lib/contact";
 
 export function Footer() {
   return (
@@ -43,27 +44,27 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs text-zinc-400">
               <li>
-                <Link href="#como-funciona" className="hover:text-white transition-colors">
+                <Link href="/#como-funciona" className="hover:text-white transition-colors">
                   Como Funciona
                 </Link>
               </li>
               <li>
-                <Link href="#diferenciais" className="hover:text-white transition-colors">
+                <Link href="/#diferenciais" className="hover:text-white transition-colors">
                   Chatbot vs Téo
                 </Link>
               </li>
               <li>
-                <Link href="#cracha" className="hover:text-white transition-colors">
+                <Link href="/#cracha" className="hover:text-white transition-colors">
                   O Crachá do Téo
                 </Link>
               </li>
               <li>
-                <Link href="#setores" className="hover:text-white transition-colors">
+                <Link href="/#setores" className="hover:text-white transition-colors">
                   Setores Atendidos
                 </Link>
               </li>
               <li>
-                <Link href="#faq" className="hover:text-white transition-colors">
+                <Link href="/#faq" className="hover:text-white transition-colors">
                   Perguntas Frequentes
                 </Link>
               </li>
@@ -112,11 +113,15 @@ export function Footer() {
             <ul className="space-y-2.5 text-xs text-zinc-400">
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-laranja shrink-0" strokeWidth={1.5} />
-                <span>contato@turno.ai</span>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">
+                  {CONTACT_EMAIL}
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" strokeWidth={1.5} />
-                <span>Atendimento WhatsApp</span>
+                <Phone className="w-3.5 h-3.5 text-laranja shrink-0" strokeWidth={1.5} />
+                <a href={CONTACT_PHONE_HREF} className="hover:text-white transition-colors">
+                  {CONTACT_PHONE_DISPLAY}
+                </a>
               </li>
               <li className="pt-2 text-[11px] font-mono text-zinc-500">
                 Turno Tecnologia e Operações LTDA
@@ -130,12 +135,12 @@ export function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-zinc-400">
           <p>© {new Date().getFullYear()} Turno. Todos os direitos reservados.</p>
           <div className="flex items-center gap-6">
-            <span className="hover:text-zinc-300 transition-colors cursor-pointer">
-              Privacidade de Dados
-            </span>
-            <span className="hover:text-zinc-300 transition-colors cursor-pointer">
-              Termos Operacionais
-            </span>
+            <Link href="/privacidade" className="hover:text-zinc-300 transition-colors">
+              Política de Privacidade
+            </Link>
+            <Link href="/termos" className="hover:text-zinc-300 transition-colors">
+              Termos de Uso
+            </Link>
             <span className="hover:text-zinc-300 transition-colors cursor-pointer">
               Segurança
             </span>
