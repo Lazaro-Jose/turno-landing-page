@@ -158,9 +158,13 @@ export function Hero() {
               {/* Header do Card / Status */}
               <div className="flex items-center justify-between pb-3 border-b border-aco-light">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-[8px] bg-[#101418] text-white flex items-center justify-center text-xs font-bold font-mono">
-                    TÉO
-                  </div>
+                  <Image
+                    src="/assets/images/teo-avatar.png"
+                    alt="Crachá do Téo"
+                    width={403}
+                    height={720}
+                    className="h-12 w-auto shrink-0"
+                  />
                   <div>
                     <p className="text-xs font-bold text-grafite">Téo · Operação Turno</p>
                     <p className="text-[11px] text-aco font-mono">Matrícula #0042 · Ativo 24/7</p>

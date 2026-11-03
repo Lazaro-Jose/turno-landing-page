@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn, FadeInStagger, FadeInStaggerItem } from "./animations/MotionWrapper";
@@ -68,11 +69,14 @@ export function TeoBadge() {
 
               {/* Avatar do Crachá (Sem rosto humano falso - símbolo de crachá institucional) */}
               <div className="my-6 text-center">
-                <div className="w-24 h-24 mx-auto rounded-[12px] bg-grafite text-white flex flex-col items-center justify-center border-2 border-laranja relative shadow-xs">
-                  <span className="text-2xl font-bold font-archivo tracking-tight">TÉO</span>
-                  <span className="text-[9px] font-mono text-laranja uppercase tracking-widest mt-1">
-                    DIGITAL
-                  </span>
+                <div className="w-20 mx-auto flex flex-col items-center relative">
+                  <Image
+                    src="/assets/images/teo-avatar.png"
+                    alt="Crachá do Téo"
+                    width={403}
+                    height={720}
+                    className="w-20 h-auto"
+                  />
                   <div className="absolute -bottom-2.5 px-2 py-0.5 rounded-full bg-emerald-600 text-[9px] font-mono text-white font-bold tracking-wider uppercase flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                     ATIVO
